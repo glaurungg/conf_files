@@ -16,6 +16,11 @@ export PATH=$PATH:$SCRIPTS_PATH
 # Source Control Changes
 export SVN_EDITOR=/usr/bin/vim
 
+if [[ -f ~/scripts/bin/gen-cscope-db ]]
+then
+    alias gen-cscope-db='source gen-cscope-db'
+fi
+
 ##############################################################################
 #Command prompt changes
 smiley() {
@@ -28,18 +33,18 @@ else
 fi
 }
 
-PS1='\[\033[1;36m\][\#::\H::\W] [$(smiley)\[\033[1;36m\]]\n-->\[\033[0m\]'
+PS1='\[\033[1;36m\][\!::\H::\W] [$(smiley)\[\033[1;36m\]]\n-->\[\033[0m\]'
 
 ##############################################################################
 # Isilon Stuffs
-if [ -f ~/ssd/svn/onefs ]
+if [ -d ~/ssd/svn/onefs ]
 then
     export QA=/usr/local/qa
     export TOOLS=/usr/local/tools
     export QALIB=$QA/lib
     export PERL5LIB=$QA/lib
     export PATH=$QA/bin:$QA/tests:$QA/linux/bin:$TOOLS:$PATH
-    route_fix
+    [ -z "$PS1" ] && route_fix
 fi
 
 

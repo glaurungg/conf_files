@@ -11,14 +11,18 @@ augroup CursorLine
 augroup END
 " F4 toggles highlight search
 noremap <F4> :set hlsearch! hlsearch?<CR>
-" Bad whitespace
-highlight BadWhitespace ctermbg=red guibg=red
+" Line numbers
+set number
 
 """"""""""""""""""""" Colors and fonts
 syntax enable
 let g:solarized_termtrans=1
 set background=dark
 colorscheme solarized
+" Get rid of ugly line number highlighting
+highlight LineNr ctermbg=255
+highlight TabLineSel ctermbg=255
+highlight Tabline ctermbg=255
 
 """"""""""""""""""""" Text and tabs etc
 set expandtab

@@ -1,5 +1,4 @@
 """"""""""""""""""""" Extenstions
-source ~/.vim/bundle/cscope_maps.vim
 execute pathogen#infect()
 
 """"""""""""""""""""" UI
@@ -23,6 +22,9 @@ colorscheme solarized
 highlight LineNr ctermbg=255
 highlight TabLineSel ctermbg=255
 highlight Tabline ctermbg=255
+
+highlight ExtraWhitespace ctermbg=red
+match ExtraWhitespace /\s\+$/
 
 """"""""""""""""""""" Text and tabs etc
 set expandtab

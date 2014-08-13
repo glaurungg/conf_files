@@ -4,13 +4,23 @@ alias ..="cd .."
 alias ls='ls --color=auto'
 alias ll='ls -l'
 alias e="exit"
+alias grep='grep --color=auto'
 
-SCRIPTS_PATH=/home/$(whoami)/scripts/bin
+# Creates a local scripts directory if one does not exists (and adds a bin
+# subdirectory to the path to easily use user defined scripts) I normally
+# just symlink things that live elsewhere into the bin directory
+SCRIPTS_PATH=~/scripts/bin
 if [ ! -d $SCRIPTS_PATH ]
 then
     mkdir -p $SCRIPTS_PATH
 fi
 export PATH=$PATH:$SCRIPTS_PATH
+
+########
+# ISI ONLY
+#export PYTHONPATH=$PYTHONPATH:~/ssd/git/onefs.git/test/lib
+########
+
 
 ##############################################################################
 # Source Control Changes
@@ -33,7 +43,60 @@ else
 fi
 }
 
-PS1='\[\033[1;36m\][\!::\H::\W] [$(smiley)\[\033[1;36m\]]\n-->\[\033[0m\]'
+# Based off a script by epopovich@isilon.com
+git_pretty() {
+    BRANCH=$(git branch 2>/dev/null | grep "^\* " | cut -d" " -f2)
+    if [ "$BRANCH" == "" ]
+    then
+        VAR=""
+    else
+        GIT_DIR=$(git rev-parse --show-toplevel)
+        REPO_NAME=$(basename "$GIT_DIR")
+        VAR="$REPO_NAME <$BRANCH>"
+        GIT_STATUS=`git status`
+
+        if [ "`echo $GIT_STATUS | egrep \"Changes not staged for commit|Changes to be committed|Changed but not updated\"`" == "" ]
+        then
+            GIT_NOT_STAGED=""
+        else
+            GIT_NOT_STAGED="$(tput setaf 1)*$(tput sgr0)"
+        fi
+
+        if [ "`echo $GIT_STATUS | egrep \"Your branch is ahead of\"`" == "" ]
+        then
+            GIT_AHEAD_OF=""
+        else
+            GIT_AHEAD_OF="$(tput setaf 3)*$(tput sgr0)"
+        fi
+
+        if [ "`echo $GIT_STATUS | egrep \"Your branch.*have diverged\"`" == "" ]
+        then
+            GIT_DIVERGE=""
+        else
+            GIT_DIVERGE="$(tput setaf 1)XXX$(tput sgr0)"
+        fi
+
+        if [ "`echo $GIT_STATUS | egrep \"Your branch is behind\"`" == "" ]
+        then
+            GIT_BEHIND=""
+        else
+            GIT_BEHIND="[$(tput setaf 2)*$(tput sgr0)"
+        fi
+
+        if [ "`echo $GIT_STATUS | egrep \"Untracked files:\"`" == "" ]
+        then
+            GIT_UNTRACKED=""
+        else
+            GIT_UNTRACKED="[$(tput setaf 1)U$(tput sgr0)"
+        fi
+
+        VAR="$VAR$GIT_UNTRACKED$GIT_NOT_STAGED$GIT_AHEAD_OF$GIT_DIVERGE$GIT_BEHIND"
+    fi
+
+    echo $VAR
+}
+
+PS1='\[\033[1;36m\][\!::\H::\W][$(git_pretty) \[\033[1;36m\]] [$(smiley)\[\033[1;36m\]]\n-->\[\033[0m\]'
 
 ##############################################################################
 # Isilon Stuffs

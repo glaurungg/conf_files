@@ -6,6 +6,8 @@ alias ll='ls -l'
 alias e="exit"
 alias grep='grep --color=auto'
 
+
+
 # Creates a local scripts directory if one does not exists (and adds a bin
 # subdirectory to the path to easily use user defined scripts) I normally
 # just symlink things that live elsewhere into the bin directory
@@ -15,11 +17,6 @@ then
     mkdir -p $SCRIPTS_PATH
 fi
 export PATH=$PATH:$SCRIPTS_PATH
-
-########
-# ISI ONLY
-#export PYTHONPATH=$PYTHONPATH:~/ssd/git/onefs.git/test/lib
-########
 
 
 ##############################################################################
@@ -96,20 +93,10 @@ git_pretty() {
     echo $VAR
 }
 
-PS1='\[\033[1;36m\][\!::\H::\W][$(git_pretty) \[\033[1;36m\]] [$(smiley)\[\033[1;36m\]]\n-->\[\033[0m\]'
+# git completion!
+source ~/.git-completion.bash
 
-##############################################################################
-# Isilon Stuffs
-if [ -d ~/ssd/svn/onefs ]
-then
-    export QA=/usr/local/qa
-    export TOOLS=/usr/local/tools
-    export QALIB=$QA/lib
-    export PERL5LIB=$QA/lib
-    export PATH=$QA/bin:$QA/tests:$QA/linux/bin:$TOOLS:$PATH
-    [ -z "$PS1" ] && route_fix
-fi
-
+PS1='\[\033[1;36m\][\!::\H::\W] [$(smiley)\[\033[1;36m\]] [$(git_pretty)\[\033[1;36m\]]]\n-->\[\033[0m\]'
 
 ##############################################################################
 # Spotify cmdline control
@@ -118,4 +105,9 @@ fi
 if [ -f ~/scripts/bin/sp ]
 then
     alias splay='sp play'
+    alias lock='sp pause && gnome-screensaver-command -l'
 fi
+
+################################################################################
+# Local to each box stuff...
+source ~/.bashrc_local 2>/dev/null # And I don't care if it doesn't exist

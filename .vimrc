@@ -1,5 +1,6 @@
 """"""""""""""""""""" Extenstions
 execute pathogen#infect()
+let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
 
 """"""""""""""""""""" UI
 " Cursor column only in current window
@@ -13,29 +14,33 @@ noremap <F4> :set hlsearch! hlsearch?<CR>
 " Line numbers
 set number
 
+set pastetoggle=<F2> " Toggle into paste mode to stop autoindent from fudging
+                     " stuff up
+
 """"""""""""""""""""" Colors and fonts
 syntax enable
 let g:solarized_termtrans=1
-set background=dark
-colorscheme solarized
+colorscheme monokai
 " Get rid of ugly line number highlighting
-highlight LineNr ctermbg=255
+highlight LineNr ctermbg=0
 highlight TabLineSel ctermbg=255
-highlight Tabline ctermbg=255
+highlight Tabline ctermbg=0
 
 highlight ExtraWhitespace ctermbg=red
 match ExtraWhitespace /\s\+$/
 
 """"""""""""""""""""" Text and tabs etc
+set lbr
+set colorcolumn=80
+set backspace=indent,eol,start
+
+" Tabs
 set expandtab
 set shiftwidth=4
 set tabstop=4
-set lbr
-set colorcolumn=80
 set autoindent
-
-" If there is a modeline, use that insead
-set modeline
+set copyindent
+set smarttab
 
 """"""""""""""""""""" Backups
 set nobackup
@@ -45,9 +50,44 @@ set noswapfile
 map j gj
 map k gk
 set ignorecase
+set smartcase "Ignore case if all lower case, else make case-sensitive
 set incsearch
 set showmatch
+map ; :
 
 """"""""""""""""""""" Tab completion
 set wildmode=longest,list,full
 set wildmenu
+
+"""""""""""""""""""" File type detection
+" NOTE: Currently c only
+augroup project
+    autocmd!
+    autocmd BufRead,BufNewFile *.h,*.c set filetype=c.doxygen
+augroup END
+
+"""""""""""""""""""" Syntastic specific config options
+" Make syntastic passive, i.e. it won't check on every write.
+let g:syntastic_mode_map = {"mode": "passive"}
+
+" Provide a function to toggle syntastic.. 
+let g:syntastic_on = 0
+function! ToggleSyntastic()
+    if( g:syntastic_on == 0 )
+        exec "SyntasticCheck"
+        let g:syntastic_on = 1
+    else
+        exec "SyntasticReset"
+        let g:syntastic_on = 0
+    endif
+endfunction
+"...and map it to <F9>
+map <F9> :call ToggleSyntastic()<CR>
+
+" If there is a .vimrc in the cwd, use that instead. Secure mode restricts
+" execution of some commands in non-default vimrc files.
+set exrc
+set secure
+
+" If there is a modeline, use that insead of al lthis junk
+set modeline

@@ -42,6 +42,11 @@ set autoindent
 set copyindent
 set smarttab
 
+""""""'''''''''''''' Git commit message
+autocmd Filetype gitcommit setlocal spell textwidth=72
+hi clear SpellBad
+hi SpellBad cterm=underline
+
 """"""""""""""""""""" Backups
 set nobackup
 set noswapfile
@@ -88,6 +93,9 @@ map <F9> :call ToggleSyntastic()<CR>
 " execution of some commands in non-default vimrc files.
 set exrc
 set secure
+
+" TESTING AREA
+
 
 " If there is a modeline, use that insead of al lthis junk
 set modeline

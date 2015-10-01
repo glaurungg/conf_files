@@ -71,6 +71,14 @@ augroup project
     autocmd BufRead,BufNewFile *.h,*.c set filetype=c.doxygen
 augroup END
 
+augroup notes
+    autocmd!
+    autocmd BufRead,BufNewFile *.txt set wrap
+    autocmd BufRead,BufNewFile *.txt set textwidth=80
+    autocmd BufRead,BufNewFile *.md set wrap
+    autocmd BufRead,BufNewFile *.md set textwidth=80
+augroup END
+
 """""""""""""""""""" Syntastic specific config options
 " Make syntastic passive, i.e. it won't check on every write.
 let g:syntastic_mode_map = {"mode": "passive"}
@@ -96,6 +104,8 @@ set secure
 
 " TESTING AREA
 
+" Machine specific stuff
+source ~/.vimrc_local
 
 " If there is a modeline, use that insead of al lthis junk
 set modeline

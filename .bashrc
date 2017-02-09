@@ -96,9 +96,7 @@ git_pretty() {
 # git completion!
 source ~/.git-completion.bash
 
-COLOR="$(tput setaf 6)" # Cyan
-BOLD="$(tput bold)"
-PS1="$BOLD$COLOR[\!::\H::\W] [$(smiley)$BOLD$COLOR] [$(git_pretty)$BOLD$COLOR]\n-->$(tput sgr0)"
+PS1='\[\033[1;36m\][\!::\H::\W] [$(git_pretty)\[\033[1;36m\]]]\n-->\[\033[0m\]'
 
 ##############################################################################
 # Spotify cmdline control

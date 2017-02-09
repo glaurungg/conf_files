@@ -96,7 +96,8 @@ git_pretty() {
 # git completion!
 source ~/.git-completion.bash
 
-PS1='\[\033[1;36m\][\!::\H::\W] [$(smiley)\[\033[1;36m\]] [$(git_pretty)\[\033[1;36m\]]]\n-->\[\033[0m\]'
+COLOR="$(tput setaf 6)" # Cyan
+PS1="$(tput bold)$COLOR[\!::\H::\W] [$(smiley)$COLOR] [$(git_pretty)$COLOR]\n-->$(tput sgr0)"
 
 ##############################################################################
 # Spotify cmdline control
@@ -109,5 +110,16 @@ then
 fi
 
 ################################################################################
+# SSH
+################################################################################
+if [ -f ~/.ssh/id_rsa ]
+then
+    eval $(ssh-agent -s)
+    ssh-add ~/.ssh/id_rsa
+fi
+
+################################################################################
 # Local to each box stuff...
 source ~/.bashrc_local 2>/dev/null # And I don't care if it doesn't exist
+
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting

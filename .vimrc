@@ -8,14 +8,12 @@ let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
 " Cursor column is makes vim slow on os x
 if has("unix")
   let s:uname = system("uname")
-  if s:uname != "Darwin\n"
-    " Cursor column only in current window
-    augroup CursorLine
-        au!
-        au VimEnter,WinEnter,BufWinenter * setlocal cursorcolumn
-        au WinLeave * setlocal nocursorline
-    augroup END
-  endif
+  " Cursor column only in current window
+  augroup CursorLine
+      au!
+      au VimEnter,WinEnter,BufWinenter * setlocal cursorcolumn
+      au WinLeave * setlocal nocursorline
+  augroup END
 endif
 " F4 toggles highlight search
 noremap <F4> :set hlsearch! hlsearch?<CR>

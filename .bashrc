@@ -6,7 +6,11 @@ alias ll='ls -l'
 alias e="exit"
 alias grep='grep --color=auto'
 
-
+which sudoedit
+if [ $? -ne 0 ]
+then
+    alias sudoedit="sudo -e"
+fi
 
 # Creates a local scripts directory if one does not exists (and adds a bin
 # subdirectory to the path to easily use user defined scripts) I normally
@@ -111,14 +115,18 @@ fi
 ################################################################################
 # SSH
 ################################################################################
-if [ -f ~/.ssh/id_rsa ]
-then
-    eval $(ssh-agent -s)
-    ssh-add ~/.ssh/id_rsa
-fi
+function sshAgent() {
+    if [ -f ~/.ssh/id_rsa ]
+    then
+        eval $(ssh-agent -s)
+        ssh-add ~/.ssh/id_rsa
+    fi
+}
 
 ################################################################################
 # Local to each box stuff...
 source ~/.bashrc_local 2>/dev/null # And I don't care if it doesn't exist
 
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+# envy config
+source ~/.envyrc

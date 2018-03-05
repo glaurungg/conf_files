@@ -1,7 +1,15 @@
 
 # Make life easy
+if [[ -n `uname -a | grep -i mac` ]]
+then
+    echo "MAC"
+    alias ls='ls -G'
+else
+    echo "NOT MAC"
+    alias ls='ls --color=auto'
+fi
+
 alias ..="cd .."
-alias ls='ls --color=auto'
 alias ll='ls -l'
 alias e="exit"
 alias grep='grep --color=auto'
@@ -11,7 +19,6 @@ if [ $? -ne 0 ]
 then
     alias sudoedit="sudo -e"
 fi
-
 # Creates a local scripts directory if one does not exists (and adds a bin
 # subdirectory to the path to easily use user defined scripts) I normally
 # just symlink things that live elsewhere into the bin directory

@@ -33,6 +33,7 @@ export PATH=$PATH:$SCRIPTS_PATH
 ##############################################################################
 # Source Control Changes
 export SVN_EDITOR=/usr/bin/vim
+export EDITOR=/usr/bin/vim
 
 if [[ -f ~/scripts/bin/gen-cscope-db ]]
 then
@@ -107,7 +108,14 @@ git_pretty() {
 # git completion!
 source ~/.git-completion.bash
 
-PS1='\[\033[1;36m\][\!::\H::\W] [$(git_pretty)\[\033[1;36m\]]]\n-->\[\033[0m\]'
+reset_color='\[\e[0;37m\]'
+cyan='\[\e[1;36m\]'
+green='\[\e[32m\]'
+red='\[\e[31m\]'
+blue='\[\e[34m\]'
+PS1="${cyan}[\!::\$(pwd)][${red}\$AWS_DEFAULT_PROFILE${cyan}][${green}\$(kubectl config current-context)${cyan}][\$(git_pretty)${cyan}]]\n-->${reset_color}"
+
+# PS1='\[\033[1;36m\][\!::\H::\W] [$(git_pretty)\[\033[1;36m\]]]\n-->\[\033[0m\]'
 
 ##############################################################################
 # Spotify cmdline control
@@ -131,9 +139,14 @@ function sshAgent() {
 }
 
 ################################################################################
+# Python
+################################################################################
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+################################################################################
 # Local to each box stuff...
 source ~/.bashrc_local 2>/dev/null # And I don't care if it doesn't exist
 
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 # envy config
 source ~/.envyrc

@@ -20,8 +20,11 @@ noremap <F4> :set hlsearch! hlsearch?<CR>
 " Line numbers
 set number
 
+"""""""""""""""""""" Pasting (os x)
 set pastetoggle=<F2> " Toggle into paste mode to stop autoindent from fudging
                      " stuff up
+" Copy visual selection to clipboard
+vnoremap <C-c> :w !pbcopy<CR><CR>
 
 """"""""""""""""""""" Colors and fonts
 syntax enable
@@ -34,6 +37,8 @@ highlight Tabline ctermbg=0
 
 highlight ExtraWhitespace ctermbg=red
 match ExtraWhitespace /\s\+$/
+au BufReadPost Jenkinsfile* set syntax=groovy
+
 
 """"""""""""""""""""" Text and tabs etc
 set lbr
@@ -45,8 +50,7 @@ set expandtab
 set shiftwidth=2
 set tabstop=2
 set autoindent
-set copyindent
-set smarttab
+set nosmarttab
 
 """"""'''''''''''''' Git commit message
 autocmd Filetype gitcommit setlocal spell textwidth=72
@@ -107,8 +111,6 @@ map <F9> :call ToggleSyntastic()<CR>
 " execution of some commands in non-default vimrc files.
 set exrc
 set secure
-
-" TESTING AREA
 
 " Machine specific stuff
 source ~/.vimrc_local

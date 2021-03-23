@@ -25,13 +25,12 @@
     to a relevant version of pip)
   - ended up just yanking poise-python all together since it's dead.
 - [x] Fix fluentd logging to parse `log` field as json
-- [ ] squirrel write up + admin
+- [x] squirrel write up + admin
   - Admin:
-    - [ ] Update squirrel dandy build -- finish fixing it
     - [x] Have Jesse Hodges guinea pig the setup & verify deploy sections (check
       thurs)
   - Doc:
-    - [ ] Update to address Jhodges concerns & demo feedback
+    - [x] Update to address Jhodges concerns & demo feedback
       - ECS - How does it compare? Cost?
       - ConfigR - How does it compare?
       - SSM - How does it compare?
@@ -40,10 +39,493 @@
         you a good idea of all the things we have to do vs things that k8s gives
         us out of the box"
     - [x] Sign up for demo slot & slides by FRI 9/6
-- [ ] Look into SSHD best practices (for user unification)
-- [ ] See if we can't squeeze more value out of the k8s api audit logs
-  - fluentd - pulling more fields out of responseJSON so they're filterable
-  - k8s - tuning so maybe they're not so voluminous & general setting tweaking
-  - audit log consumption ideas. Cluster backup, test cluster replication
-- [ ] 9/12 -- go refresh kibana fields and remove the template max docvalue
-  setting
+- [x] Fix lswcore (dev + prod) so that chef runs (test)
+- [x] etcd eggstravaganza
+  - [x] fix backup job! (cluster was a bit hosed b/c I removed a db file or
+    something)
+  - [x] make ALB so we can do SG filtering
+  - [x] enable etcd v3 backups from etcd restore job (this should fix backup as
+    well)
+  - [x] upload etcd restore from backup docs and link to it in the nagios check
+- [x] etcd permissions
+  - [x] exint test -- had to fix it by switching to classic LBs what a fiasco
+  - [x] exint staging
+    - [x] create security groups
+    - [x] roll non-spark workers
+    - [x] roll spark secondary workers
+    - [x] roll spark workers
+    - [x] true up cloudformation stack (delete old ASGs, sparks mainly)
+    - [x] roll masters
+    - [x] true up master CF stack (delete old asgs)
+    - [x] add new etcd nodes
+    - [x] switch DNS record
+    - [x] delete old etcd nodes
+    - [x] true up etcd CF stack
+    - [x] Remove k8s-test inbound traffic from etcd-staging sg
+  - [x] exint prod
+    - [x] create security groups
+    - [x] don't need to roll k8s, they have `k8s` sg already
+    - [x] roll up new etcd members w/ new SG (& load balancer)
+    - [x] switch DNS record
+    - [x] roll down old etcd nodes
+    - [x] add datadog checks
+        - [x] add etcd & consul DD integration
+        - [x] add recipe to roles (added to etcd test cluster)
+        - [x] set up alerts
+        - [x] remove nagios checks
+    - [x] remove default sg inbound rule for etcd sg
+  - [x] lsw dev
+- [x] care-prod-eu k8s cluster
+  - [x] create iam role (madams)
+  - [x] create etcd security group (+ load balancer sg)
+  - [x] create k8s security group
+  - [x] create etcd role
+  - [x] create etcd cloudformation stack
+  - [x] spin up etcd cluster (edit role to 'existing' cluster state after first node)
+  - [x] route 53 etcd LB entry
+  - [x] create k8s-master role
+  - [x] create k8s-master cloudformation stack
+  - [x] spin up masters
+  - [x] route 53 entries in exint for etcd LB & k8s master ELB
+  - [x] create k8s-minion role
+  - [x] create k8s-minion cloudformation stack
+  - [x] spin up minions
+  - [x] rbac roles for remote access
+  - [x] test that a pod can run huehue
+  - [x] apply k8s-deployments
+- [x] sumologic smm-dev k8s cluster
+- [x] sumologic smm-prod-us k8s cluster
+- [x] sumologic smm-prod-eu k8s cluster
+- [ ] Clean up etcd test NLB
+- [x] lsw analytics webapp deploying in jenkins
+  - [x] build dandy file
+    - [x] docker build (analytics-webapp/src/main/docker/app/Dockerfile)
+    - [x] qa app, w/ appropriate env vars for start script
+  - [x] put dandy file at appropriate spot in build (release/Jenkinsfile-release-patch)
+  - [x] update start script with no sumologic logic (handled by kube)
+  - [x] updated app config file
+          (analytics-webapp/src/main/resources/application-docker.yml) to append
+          to stdout for docker logs
+  - [x] updated app config file to send DD metrics via HTTP not udp dogstatsd
+      - move to our key??
+  - [x] figure out what they want done to the slow / query logs (currently just
+          text files that sit in the container)
+  - [x] set up ingress / node port
+  - [x] ensure connectivity
+      - [x] incoming web traffic
+      - [x] metric reporting
+      - [x] sumologic collection
+      - [x] elastic connectivity
+      - [x] s3 upload connectivity
+- [x] add \*.qa _and_ \*.dev cert load balancers for smm-dev k8s cluster (brody)
+- [ ] Spin up new dandy label node from exint chef in dev-lsw jenkins
+  - [x] QA (need to get squirrel building)
+  - [ ] prod
+- [x] Custom metric HPA
+  - [x] pull down dd cluster agent into k8s deployments and edit
+  - [x] deploy to test cluster
+  - [x] test w/ custom metrics for busybox or something
+  - [x] clean up
+  - [x] apply to smm-prod-us cluster CLEANLY from code
+  - [x] commit & cr
+  - [x] apply to all other clusters
+    - [x] production
+    - [x] smm-dev
+    - [x] smm-prod-us
+    - [x] smm-prod-eu
+  - [x] writeup for engineering org
+    - examples
+    - alarms on scaling metrics
+    - careful of overall scale
+- [ ] get analytics-pipeline up and running
+  - [x] code complete
+  - [ ] turn analytics webapp back on once s3 permissions are sorted
+  - [ ] test local deploys (once es7 is done reindexing in QA)
+  - [ ] Check in with analytics team about es7 reindex and restart forward progress
+- [x] update lswcore mysql AMIs
+  - [x] test spinning up cluster w/ `deploy-stack.py` to see if we can't get
+    tags working. Figure out why they aren't working if not
+  - [x] commit changes (PR)
+  - [x] swap QA envs
+  - [x] chef yum package retry (will need for all packages when updating amis)
+  - [x] figure out prod / stage schedule w/ mcc (mcc did it bless)
+- [x] kubeified kibana for care-analytics es7 cluster(s)
+- [ ] Timezone database
+  - [x] merge all images into base docker image
+    - [x] unify base image (with links)
+    - [x] unify dandy-java8 (+schema-tools from sf-common), docker-java8, java8 baseimages
+    - [x] Test w/ SF services
+      - [x] sf-crm-gateway
+			- [x] sf-social-gateway
+			- [x] dashy
+		- [x] cleanup test resources
+		- [x] email blast to marketing eng
+	- [x] tzdata for oracle jdk images
+	- [x] openjdk image & tzdata for open jdk image
+  - [x] alerts for updates
+	- [x] unfuck consul-template shit
+	- [x] move docker-java8 base java image into baseimages repo, overwrite spredfast/java8
+	- [x] add custom CA cert to host OS on baseimage AND java in base java image
+	- [ ] port care analytics image to baseimages repo (asked them in channel)
+  - [ ] updates on ES7 analtyics clusters (not automated, but tooling? ask why)
+- [x] emergency metrics upgrades for staging cluster
+	- [x] apply k8s-metrics
+	- [x] get prometheus / grafana working (probably going to abandon this since ed found the problem)
+	- [x] make sure we've dropped the same thread limits in staging we did in production
+--------------------------------- Begin 2020 ----------------------------------
+- [x] Elasticache Redis for care-analytics
+  - [x] dev us-west-2
+  - [x] datadog dashboard
+  - [x] datadog alerts
+  - [x] stage us-west-2
+  - [x] prod us-west-2 (2 nodes)
+  - [x] prod eu-west-1 (2 nodes)
+- NFL Apocalypse
+- [x] Add dev-admin cert
+  - [x] generate cert
+    - (updated docs for manual instructions)
+  - [x] update rbac, remove more dev permissions while I'm in here
+  - [x] instructions for ops to add
+  - [x] applied to prod
+  - [x] applied to test
+  - [x] applied to staging
+  - [x] applied to care-test
+  - [x] applied to care-prod
+  - [x] applied to care-prod-eu
+- [x] update nfl nagios checks
+  - [x] install docker on nagios (manually for now)
+    - `sudo apt-get install docker.io && sudo usermod ubuntu -a -G 999`, relog
+  - [x] use docker image for checks (creds from consul)
+  - [x] drop a temp file to diff for reduced paging spam
+  - [x] sql steve slack on alert
+- [x] set up dns forwarding for response.lithium.com
+  - Used bind server from socialweb\_chef/lithium\_bind
+- [x] set up dns forwarding for sdxdemo.com
+- [x] Helm
+	- [x] Research docs
+	- [x] Clean up notes for team consumption, helm basics to CI/CD ideas
+	- [x] Presentation to team on helm plan
+	- [x] helm-charts repo set up
+	- [x] develop test chart, datadog agent
+	- [x] hosted helm chart repository hosted
+	- [x] build tooling
+		- [x] repo update tooling
+		- [x] Add helm to jenkins workers
+	- [x] develop test cluster umbrella chart, plug dd-agent chart into it
+	- [x] helm cookbook + sync-from-s3 jenkins job
+	- [x] flux & helm-operator tooling
+	- [x] add ro helmrelease to `dev-access` & deploy across clusters
+	- [x] move helm install to helm cookbook
+	- [x] add helm cli to helm.massrel.com and add `helm index --url` step
+	- [x] README.md
+	- [x] bootstrap care-test cluster, update instructions.md
+	- [x] bootstrap the rest of the clusters
+	    - [x] stage
+	    - [x] production
+	    - [x] care-test
+	    - [x] care-prod (brody)
+	    - [x] care-prod-eu (brody)
+	- [ ] start yanking other deployments
+- [ ] Google auth ingress for smm k8s clusters
+- [x] Care analytics kube primer https://jira.dev.lithium.com/browse/LSWR-7875
+- [x] Replace all C\* verwalter servers
+	-  https://jira.dev.lithium.com/browse/SPRDOPS-27075 
+- [x] Bangalore lead interviews
+	- [x] Manoj (12/4/19)
+	- [x] Rizwan (12/10/19)
+	- [x] Sathiyanathan (12/17/19)
+	- [x] Piyush (1/13/20)
+- [x] annual review
+	- [x] goals
+	- [x] review
+	- [x] mando review before submit if possible
+- [ ] Productize (CF stack) mission-critical class ingress
+- [ ] slice ecs out of dandy(!)
+- [ ] move rbac.out to a helm cookbook (pr)
+- [ ] k8s ingress cleanup
+  - [x] all QA moved off of node ports
+  - [x] Envy changes, use dns not k8s-minions.massrel.com
+    - [x] Create `-thrift` services for every `-node-port` service
+    - [x] Create a map in configurator.rb
+  - [ ] merge envy changes
+  - [x] draft email
+  - [ ] all Prod moved off of node ports (??)
+  - [ ] remove node port services (TODO set date and communicate)
+- [x] delete old shit (bad qas, old ingress)
+- [x] Port forwarding for envy
+- [x] ES-kibana crowdstrike dumps
+- [x] ANZ Care
+  - [x] Copy jenkins worker AMI over to ap-southeast-2
+  - [x] Add jenkins work for ap-southeast-2 w/ labels (orchestration&&prod&&ap-southeast-2)
+  - [x] update lookup lambda (socialweb-ops/lambda/lookup)
+    - [x] add appropriate zones etc.
+    - [x] build (`KEEP_FILES=1 ./ops/bin/upload 128:master:39d4bb18`)
+    - [x] upload if that didn't work
+    - [x] update jenkinsfile there
+    - [x] run https://dev-lswcore-jenkins-master.dev.aws.lcloud.com/job/lambdas/job/lookup/job/lookup-pipeline/
+  - [x] also need the CFLookup function from `socialweb-ops/lambda/lithium_cf_lookup`
+  - [x] re-deploy lookup lambda for subnets (lots of fixing)
+  - [x] update sns-to-slack lambda to contain ap-southeast-2 regions & deploy.sh
+  - [x] MHA MySQL cluster
+    - [x] fix s3 cp metadata stuff
+  - [x] productize CFLookup stack (jenkinsfile, fix tests, etc)
+  - [x] Ask Arm what else he'd want to see to merge
+  - [x] merge
+  - [x] start looking into re-deploying ECS / ECS fab tasks
+- [x] Roll care-test k8s cluster from us-west-2 a + b + c -> a + b
+  - [x] minions
+    - [x] new resources executed
+    - [x] new minions spun up
+    - [x] old minions deleted
+    - [x] move ingresses over
+    - [x] old resources deleted
+  - [x] masters
+    - [x] new resources executed
+    - [x] new minions spun up
+    - [x] old resources deleted
+- [x] figure out what happened to etcd smm dev (ec2 termination)
+- [x] Kube 101 talk next wednesday for joseph hanson's team
+  - "what is kube? How do I use it? How do we use it @ khoros?"
+  - core curriculum that could be part of engineering onboarding
+  - recurring open monthly demo?
+  - [x] talk w/ mando on monday
+  - [x] docs
+  - [x] slide deck
+- [x] Send out email updating everyone on pushed node port deadline
+- [x] Helm Presentations
+  - [x] Schedule a "how we helm" talk for this week for ops
+  - [x] Slides + presentation ready for how we helm
+  - [x] Sign up for sprint demos with how we helm
+  - [x] update slides for sprint demos (more relevant to broader audience)
+  - [x] present @ sprint demos
+  - [x] present @ operations all hands
+- [x] Chewing through SPRDOPS backlog
+  - [x] Add SSH Keys (https://jira.dev.lithium.com/browse/SPRDOPS-27196)
+  - [x] Ask russ about internal appsearch ES then move to PUB (https://jira.dev.lithium.com/browse/SPRDOPS-27207)
+- [x] kiam as a helm chart
+  - [x] base helm chart (used uswitch community chart)
+  - [x] update russ' kube 2 iam docs
+    - [x] how it works with helm
+    - [x] how it works in geneal (basic sketch)
+  - [x] create iam role copy script to create kubernetes-minion clones
+  - [x] create script to get roles and last accessed dates
+  - [x] create a comprehensive list of roles + access age
+  - [x] start pruning care roles
+  - [x] update dandy to add the appropriate minion role annotation
+    -  This will be a no pass clone at first
+  - [x] roll out to staging
+  - [x] roll out to care-prod
+    - [x] NS annotations
+    - [x] helmrelease
+  - [x] roll out to care-prod-eu
+    - [x] NS annotations
+    - [x] helmrelease
+  - [x] smm prod kiam-server role
+- [x] restart the care analytics to kube
+  - [x] webapp kiam role created and applied
+  - [x] webapp PR retouched
+  - [x] pipeline kiam role created (ask about permissions)
+  - [x] pipeline PR retouched
+  - [x] create a separate dd-agent deploy w/ the care api key
+    - [x] create khoros only chart, community chart is busted for standalone
+      (looks like it'll work nicely for regular DD-agent deploys though)
+  - [x] Jenkins fixings
+    - Abandonded trying to spin up via chef, pipeline libs are bonkers
+    - Just added a new node type that is a clone of big java8 + dandy
+    - Deploys working
+  - [x] Roll out helm charts (dogstatsd, custom metrics hpa) to care-prod + care-prod-eu
+      -  This is going to require deleting / fixing a bunch of stuff
+  - [x] Dogstatsd not working
+    - Narrowed down the issue to the startup script setting the STATSD env var
+    - Had to create a separate deployment to test out my changes non-disruptively
+    - Still not getting the appropriate tags, but I can tcpdump udp and see
+      traffic going to statsd FROM the webapp pod, haven't been able to track
+      down the incoming traffic from the statsd side but also haven't checked
+      every node
+    - [x] Validate fix & release patch
+    - [x] clean up -n qa deployment/webapp-analytics-jw-test
+  - [x] Fix kiam permissions for webapp QA
+  - [x] cut over to 100% kube traffic
+- [x] send out email with date to all eng (+ kwichell + sohara)
+- [x] Sumologic epic
+  - [x] Get a helm chart up and running
+  - [x] Migrate existing things to sumo
+  - [x] fleetwide syslogs to marketing staging
+  - [x] syslogs + audit logs back to kibana
+  - [x] look into why TR and exint-prod are logging so much
+    - Rolled exint-prod stacktraces into one message
+  - [x] get in touch with the exint + tr team and ask them to tone down the
+    logging (mando did this)
+  - [x] email to rad-mktg about sumo
+  - [x] follow up with rad-mktg
+  - [x] create sumo migration docs
+    - Access to sumo
+    - How indexing works / maps from kibana
+    - Sample workflow translation from kibana to sumo
+    - Migration plan: run your queries!
+  - [x] Trim sumo log metadata from kube (stil have to roll marketing pods)
+  - [x] compile a list of marketing engineers
+  - [x] pingfederate sumo (follow up with corpit)
+  - [x] communitcate cut off date to wide audience (6/26)
+  - [x] update care clusters to support json logging (analytics moved huzzah)
+  - [x] look @ sumologic tagging jira from shane
+  - [x] Sumo field mapper (might not be necessary, or just for host)
+- [x] care staging cluster
+  - [x] etcd cluster
+  - [x] k8s masters
+  - [x] k8s minions
+  - [x] k8s deployments
+  - [x] bootstrap helm
+  - [x] apply helm charts
+  - [x] copy over and change current staging ingress records
+- [x] create dandy nodes for care prod jenkins so it can deploy to kube
+- [x] APSE DNS issues (https://jira.dev.lithium.com/browse/SPRDOPS-27433)
+  - Dug in real deep, found basically nothing
+  - [x] Fix up bind dns
+    - [x] add stats to care dns files
+    - [x] figure out how to get traffic from apse to graphite-k8s.massrel.com
+    - https://jira.dev.lithium.com/browse/TOS-13979
+- [x] Ansible
+  - [x] Github + account access
+  - [x] Next steps: feature branch + play around with node
+- [x] helm deep dive talk for ops @ large
+- [x] spin up ansible infrastructure in marketing account
+  - [x] packer s3 infra
+  - [x] manually uploaded golden machine AMI
+  - [x] encrypt golden machine AMI (+ delete old one)
+  - [x] ansible test ASG
+    - [x] edit out subnet import
+    - [x] figure out the whole secrets store / shared resources circular
+      dependency  dance, test asg needs it (AWX too?) resources/secrets_storage/secrets_storage.yaml
+    - [x] GenericIOPSInstanceProfile from shared resources
+    - [x] add port -1 range 172.29.0.0/16 rule to existing SG for intra vpc traffic
+- [x] add controllerrevision to k8s rbac
+- [x] Come up with a communication / enforcement plan for KIAM role creation
+- [x] es-calendar-app3
+- [x] es-appsearch-app3
+  - [x] master + data CF parameters
+  - [x] master + data roles
+  - [x] roll out new masters
+  - [x] decom old master (1 down, two to go)
+  - [x] roll out new data nodes (make sure s3 plugin installed)
+  - [x] decom old data nodes
+  - [x] switch DNS entries
+  - [x] set up snapshotting
+- [x] es-streamitems-vpc
+  - [x] master + data CF parameters
+  - [x] master + data roles
+  - [x] roll out new masters
+  - [x] decom old master (1 down, two to go)
+  - [x] roll out new data nodes (make sure s3 plugin installed)
+  - [x] switch DNS entries
+  - [x] decom old data nodes (test out new ES decom stuff while doing this)
+  - [x] set up snapshotting
+- [x] move artifactory into kube (scrapped b/c of licensing, got one running
+  though)
+  - test out helm chart
+  - license upgrade(?)
+  - export artifacts from old server
+  - import artifacts to new server
+  - re-set up appropriate admin / deployer / other lastpass creds
+  - test + verify + dns switch
+- [x] Set up email + slack alerting for ES snapshotting jobs
+- [x] email + shut down node ports
+  - [x] email
+  - [ ] shut down
+- [ ] Node ports
+  - [x] Node port turn off email to rad-marketing
+  - [ ] github search + reachouts to `k8s-minions.massrel.com` occurrences
+  - [ ] graphite??
+- kube monitoring decisions
+  - [x] look into scraping prometheus metrics with datadog (thread here
+    https://khoros.slack.com/archives/CHPGD6H8S/p1597167245028200)
+  - [x] look into prometheus (~/notes/prometheus.md)
+  - [x] come up with a rough prometheus/dd pro-con for the future
+  - [x] get a working prometheus-operator helm chart install 
+  - [x] get a meeting on the books with the team so we can discuss it and
+    hopefully pick a direction
+  - [x] come up with a list of checks we need for kube to consider ourselves
+    monitored
+    (https://github.com/kubernetes-monitoring/kubernetes-mixin/blob/master/runbook.md)
+  - old ideas:
+    - [x] prometheus monitoring + alerts (slack) for helm + flux
+    - [x] prometheus monitoring + alerts for KIAM (!!)
+- [ ] Re-touch khoros-monitoring chart
+  - Split all alerts into slack / pagerduty
+  - [ ] Kiam alerting rules
+  - [ ] fluentd -- enable prometheus + add alerting rules
+  - [ ] flux alerting rules
+  - [ ] helm alerting rules
+- [ ] add dashboard config maps to khoros-monitoring
+ - [ ] kiam
+ - [ ] fluentd
+ - [ ] flux
+ - [ ] helm
+ - [ ] add "grafana.dashboardConfigMaps" values to prom-operator values files
+- [ ] Update prometheus alertmanagaer configs:
+  - Slack + pagerduty separation
+  - [x] better message templating
+    - Split out each alert
+    - say which cluster the alert is coming from
+    - better links back to prometheus
+    - links into appropriate grafana
+  - Pagerduty config
+  - [ ] kube dns prometheusrules
+  - [ ] ec2 discovery for etcd + kube control plane services
+  - [ ] ask mando if I should loop in the techops folks on kube PRs
+- [x] get a "prom operator deep dive" meeting on the books for next week for the
+- [x] prometheus operator slide deck
+- [ ] kiam + the k8s networking stack meeting on the books
+- [ ] get hands on kube meeting + resources on the books
+- [x] ELB TLS refresh
+  - [x] elb info scraping script
+  - [x] jenkins job to scrape the data (only for exint right now)
+  - [x] create google doc with all accounts + regions
+  - [x] upgrade exint
+  - Care is taking care of it's own ELBs
+- [x] move dns records for care es clusters for piyush during us business
+- [x] "what I know about artifactory doc" for docs repo + a quick walkthrough in
+  the weekly ops meeting next week. Very "how do I get this crap running"
+- [x] debug riverdata vpc
+  - do a bunch of manual poking around cassandra, see too many tombsstone scans
+    failing in delete job
+  - [x] add tombstone metrics w/ chris
+  - watched that cassandra deletion talk
+  - [x] run full compaction on every node for the sik export column family
+  - [x]  have shannon run job
+  - [x] run for non-vpc rings
+  - [x] check why there is a split on i3  / i3-en nodes
+  - it ended up being the GDPR job competing with the regular prune job and
+    running into tombstones, the fix was to run the GDPR 
+- [x] dev kafka has cpu spike
+  - [x] prune `build[0-9]+` topics from the dev cluster
+  - it still appears the cluster goes through period spikes of HIGH activity.
+    topic pruning didn't seem to have much of an effect. here's an example of
+    this happening
+    https://app.datadoghq.com/dashboard/nc3-4kq-ibz/kafka-server-statistics?from_ts=1602270813220&live=false&to_ts=1602281119487&tpl_var_role=vpc-kafka4-dev-v2
+  - so prune had to be re-done by manual ZK psychosurgery, and after that the
+    controller broker had to be restarted to trigger a controller migration and
+    full re-read from zk
+- [x] k8s services prometheus monitoring spreadsheet
+  https://docs.google.com/spreadsheets/d/1K0NkgZ8kBqw9JnATrDnv5oCkkJ8s30s56OHrmmqyJbw/edit?usp=sharing
+- [x] mysql migration PRs
+  - Make sure there are tickets to track the percona migrations as well
+  - Talked to mando and I think he's going to try and get infra to handle the
+    triage of migrations and ops to handle the execution of percona migrations
+- [x] Meeting w/ Chris McNelis (neli) on what needs to happen to get more
+  microservices into kube. GET HARD ACTION ITEMS
+- [x] Meeting w/ Malota on dockerizing ic-backend & RDS in aurora. GET HARD
+  ACTION ITEMS
+- [x] generate centrum key https://jira.dev.lithium.com/browse/ACCESS-8848
+- [x] prometheus tickets + meeting prep
+- [x] #iops-secops on sumo logging tags from kube
+- [x] 11/15 reach out to neli + rupe about edgar if they haven't yet
+  - [x] offer to run them through the welcome to kube deck, open up the invite
+  - delayed, reach out again dec 7
+- [ ] keep an eye on ic-b hmac ssm move for fab replacement stuff
+- [x] Get ES 7 QA eagle on the books next week
+- [ ] look into ES 7 snapshot lifecycle management as a way to do snapshots
+- [ ] look into IAM access advisor for paring down roles as a kiam migration strategy https://netflixtechblog.com/introducing-aardvark-and-repokid-53b081bf3a7e
+- [ ] look @ proposed log tagging for care kube sumo https://jira.dev.lithium.com/browse/LSWR-8613
+- [ ] look for kafka and cassandra level up courses / resources
+- [ ] fix kubectl logs junk output https://github.com/moby/moby/issues/40584

@@ -9,16 +9,10 @@ else
     alias ls='ls --color=auto'
 fi
 
-alias ..="cd .."
-alias ll='ls -l'
+alias kc='kubectl'
 alias e="exit"
 alias grep='grep --color=auto'
 
-which sudoedit
-if [ $? -ne 0 ]
-then
-    alias sudoedit="sudo -e"
-fi
 # Creates a local scripts directory if one does not exists (and adds a bin
 # subdirectory to the path to easily use user defined scripts) I normally
 # just symlink things that live elsewhere into the bin directory
@@ -28,6 +22,9 @@ then
     mkdir -p $SCRIPTS_PATH
 fi
 export PATH=$PATH:$SCRIPTS_PATH
+
+# Kube
+export KUBE_EDITOR="$(which vim)"
 
 
 ##############################################################################
@@ -39,6 +36,13 @@ if [[ -f ~/scripts/bin/gen-cscope-db ]]
 then
     alias gen-cscope-db='source gen-cscope-db'
 fi
+
+# Add ctags alias for os x
+if [[ -f $(which brew) && -f $(which `brew --prefix`/bin/ctags) ]]
+then
+  alias ctags="`brew --prefix`/bin/ctags"
+fi
+alias restartDns="sudo killall -HUP mDNSResponder && dscacheutil -flushcache"
 
 ##############################################################################
 #Command prompt changes
@@ -145,8 +149,32 @@ eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
 ################################################################################
+# AWS
+################################################################################
+# aws environment switching
+function awsenv {
+  if [ -e $HOME/.aws/default_profile ]; then
+      export AWS_DEFAULT_PROFILE=`cat $HOME/.aws/default_profile`
+      export AWS_PROFILE=`cat $HOME/.aws/default_profile`
+  fi
+  export AWS_DEFAULT_PROFILE=${AWS_DEFAULT_PROFILE:-dev}
+  export AWS_DEFAULT_REGION=`ruby -rinifile -e "puts IniFile.load(File.join(File.expand_path('~'), '.aws', 'config'))['profile ${AWS_DEFAULT_PROFILE}']['region']"`
+  export AWS_REGION=$AWS_DEFAULT_REGION
+
+
+  # Old style variables
+  unset AWS_ACCESS_KEY_ID AWS_ACCESS_KEY AWS_SECRET_KEY AWS_SECRET_ACCESS_KEY
+}
+function awsc {
+    if [ -z $1 ]; then
+        echo "AWS default env is `cat $HOME/.aws/default_profile`"
+        return
+    fi
+    echo $1 > $HOME/.aws/default_profile
+    awsenv
+}
+echo "AWS env is ${AWS_DEFAULT_PROFILE}"
+
+################################################################################
 # Local to each box stuff...
 source ~/.bashrc_local 2>/dev/null # And I don't care if it doesn't exist
-
-# envy config
-source ~/.envyrc

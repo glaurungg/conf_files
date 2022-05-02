@@ -1,6 +1,6 @@
 
 # Make life easy
-if [[ -n `uname -a | grep -i mac` ]]
+if [[ -n `uname -a | grep -i -e mac -e Darwin` ]]
 then
     echo "MAC"
     alias ls='ls -G'
@@ -25,6 +25,9 @@ export PATH=$PATH:$SCRIPTS_PATH
 
 # Kube
 export KUBE_EDITOR="$(which vim)"
+
+# Java
+export JAVA_HOME="/usr/local/Cellar/openjdk/17.0.1_1/"
 
 
 ##############################################################################
@@ -109,9 +112,6 @@ git_pretty() {
     echo $VAR
 }
 
-# git completion!
-source ~/.git-completion.bash
-
 reset_color='\[\e[0;37m\]'
 cyan='\[\e[1;36m\]'
 green='\[\e[32m\]'
@@ -145,8 +145,8 @@ function sshAgent() {
 ################################################################################
 # Python
 ################################################################################
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
+# eval "$(pyenv init -)"
+# eval "$(pyenv virtualenv-init -)"
 
 ################################################################################
 # AWS
@@ -178,3 +178,6 @@ echo "AWS env is ${AWS_DEFAULT_PROFILE}"
 ################################################################################
 # Local to each box stuff...
 source ~/.bashrc_local 2>/dev/null # And I don't care if it doesn't exist
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+#export PATH="$PATH:$HOME/.rvm/bin"

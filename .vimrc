@@ -1,5 +1,5 @@
 """"""""""""""""""""" Extenstions
-execute pathogen#infect()
+" execute pathogen#infect()
 let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
 
 """"""""""""""""""""" UI

@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =7
+let g:netrw_dirhist_7='/Users/joshua.wisdom/git/harrys-data-warehouse/fig/figlet/figlet-0.1.0'
+let g:netrw_dirhist_6='/Users/joshua.wisdom/git/arthur-redshift-etl/docs/source'
+let g:netrw_dirhist_5='/Users/joshua.wisdom/git/harrys-data-warehouse/.git/hooks'
+let g:netrw_dirhist_4='/Users/joshua.wisdom'
+let g:netrw_dirhist_3='/Users/joshua.wisdom/notes'
+let g:netrw_dirhist_2='/Users/joshua.wisdom/git/harrys-data-warehouse/dbt/models'
+let g:netrw_dirhist_1='/Users/joshua.wisdom/git/harrys-data-warehouse/terraform/aws/projects/ml-sagemaker/data-development/us-east-1'
+let g:netrw_dirhist_0='/Users/joshua.wisdom/.ivy2'
+let g:netrw_dirhist_9='/Users/joshua.wisdom/.sbt'
+let g:netrw_dirhist_8='/Users/joshua.wisdom'

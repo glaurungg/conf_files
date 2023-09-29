@@ -112,11 +112,16 @@ git_pretty() {
     echo $VAR
 }
 
-reset_color='\[\e[0;37m\]'
-cyan='\[\e[1;36m\]'
-green='\[\e[32m\]'
-red='\[\e[31m\]'
-blue='\[\e[34m\]'
+#reset_color='\[\e[0;37m\]'
+#cyan='\[\e[1;36m\]'
+#green='\[\e[32m\]'
+#red='\[\e[31m\]'
+#blue='\[\e[34m\]'
+reset_color="%{$reset_color%}"
+cyan="%{$fg[cyan]%}"
+green="%{$fg[green]%}"
+red="%{$fg[red]%}"
+blue="%{$fg[blue]%}"
 PS1="${cyan}[\!::\$(pwd)][${red}\$AWS_DEFAULT_PROFILE${cyan}][${green}\$(kubectl config current-context)${cyan}][\$(git_pretty)${cyan}]]\n-->${reset_color}"
 
 # PS1='\[\033[1;36m\][\!::\H::\W] [$(git_pretty)\[\033[1;36m\]]]\n-->\[\033[0m\]'
@@ -181,3 +186,5 @@ source ~/.bashrc_local 2>/dev/null # And I don't care if it doesn't exist
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 #export PATH="$PATH:$HOME/.rvm/bin"
+
+complete -C /usr/local/Cellar/tfenv/2.2.3/versions/0.14.7/terraform terraform

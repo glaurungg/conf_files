@@ -1,0 +1,54 @@
+#!/bin/env zsh
+
+git_pretty() {
+    BRANCH=$(git branch 2>/dev/null | grep "^\* " | cut -d" " -f2)
+    if [ "$BRANCH" = "" ]
+    then
+        VAR=""
+    else
+        GIT_DIR=$(git rev-parse --show-toplevel)
+        REPO_NAME=$(basename "$GIT_DIR")
+        VAR="$REPO_NAME <$BRANCH>"
+        GIT_STATUS=`git status`
+
+        if [ "`echo $GIT_STATUS | egrep \"Changes not staged for commit|Changes to be committed|Changed but not updated\"`" = "" ]
+        then
+            GIT_NOT_STAGED=""
+        else
+            GIT_NOT_STAGED="$(tput setaf 1)*$(tput sgr0)"
+        fi
+
+        if [ "`echo $GIT_STATUS | egrep \"Your branch is ahead of\"`" = "" ]
+        then
+            GIT_AHEAD_OF=""
+        else
+            GIT_AHEAD_OF="$(tput setaf 3)*$(tput sgr0)"
+        fi
+
+        if [ "`echo $GIT_STATUS | egrep \"Your branch.*have diverged\"`" = "" ]
+        then
+            GIT_DIVERGE=""
+        else
+            GIT_DIVERGE="$(tput setaf 1)XXX$(tput sgr0)"
+        fi
+
+        if [ "`echo $GIT_STATUS | egrep \"Your branch is behind\"`" = "" ]
+        then
+            GIT_BEHIND=""
+        else
+            GIT_BEHIND="[$(tput setaf 2)*$(tput sgr0)"
+        fi
+
+        if [ "`echo $GIT_STATUS | egrep \"Untracked files:\"`" = "" ]
+        then
+            GIT_UNTRACKED=""
+        else
+            GIT_UNTRACKED="[$(tput setaf 1)U$(tput sgr0)"
+        fi
+
+        VAR="$VAR$GIT_UNTRACKED$GIT_NOT_STAGED$GIT_AHEAD_OF$GIT_DIVERGE$GIT_BEHIND"
+    fi
+
+    echo $VAR
+}
+

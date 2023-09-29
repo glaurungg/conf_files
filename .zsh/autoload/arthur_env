@@ -1,0 +1,12 @@
+ARTHUR_REPO="$HOME/git/harrys-data-warehouse"
+
+arthur_env() {
+  if [ "$1" = "production" -o "$1" = "prod" ]
+  then
+    export DATA_WAREHOUSE_CONFIG="$ARTHUR_REPO/config_data_production"
+  else
+    export DATA_WAREHOUSE_CONFIG="$ARTHUR_REPO/config_data_development"
+  fi
+  export ARTHUR_DEFAULT_PREFIX=$2
+  set +x
+}
